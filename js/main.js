@@ -181,7 +181,133 @@ function createShortcutCard(shortcut) {
     return card;
 }
 
-// 단축키 렌더링
+// 성능 최적화를 위한 캐시
+const cache = {
+    shortcuts: null,
+    filteredShortcuts: new Map(),
+    searchResults: new Map(),
+    
+    // 모든 단축키 가져오기 (캐시된 버전)
+    getAllShortcuts: function() {
+        if (!this.shortcuts) {
+            this.shortcuts = shortcutsData.categories.flatMap(category => category.shortcuts);
+        }
+        return this.shortcuts;
+    },
+    
+    // 필터링된 단축키 가져오기
+    getFilteredShortcuts: function(categoryId, difficulty) {
+        const key = `${categoryId}-${difficulty}`;
+        if (!this.filteredShortcuts.has(key)) {
+            let filtered = this.getAllShortcuts();
+            
+            if (categoryId !== 'all') {
+                filtered = filtered.filter(s => s.category === categoryId);
+            }
+            
+            if (difficulty !== 'all') {
+                filtered = filtered.filter(s => s.difficulty === difficulty);
+            }
+            
+            this.filteredShortcuts.set(key, filtered);
+        }
+        return this.filteredShortcuts.get(key);
+    },
+    
+    // 검색 결과 가져오기
+    getSearchResults: function(query) {
+        if (!this.searchResults.has(query)) {
+            const results = this.getAllShortcuts().filter(shortcut => {
+                const normalizedQuery = query.toLowerCase();
+                return (
+                    shortcut.description.toLowerCase().includes(normalizedQuery) ||
+                    shortcut.keys.some(key => key.toLowerCase().includes(normalizedQuery)) ||
+                    shortcut.category.toLowerCase().includes(normalizedQuery) ||
+                    shortcut.difficulty.toLowerCase().includes(normalizedQuery) ||
+                    shortcut.usage.toLowerCase().includes(normalizedQuery)
+                );
+            });
+            this.searchResults.set(query, results);
+        }
+        return this.searchResults.get(query);
+    },
+    
+    // 캐시 초기화
+    clearCache: function() {
+        this.shortcuts = null;
+        this.filteredShortcuts.clear();
+        this.searchResults.clear();
+    }
+};
+
+// 가상 스크롤링 구현
+class VirtualScroller {
+    constructor(container, items, itemHeight) {
+        this.container = container;
+        this.items = items;
+        this.itemHeight = itemHeight;
+        this.visibleItems = Math.ceil(container.clientHeight / itemHeight);
+        this.scrollTop = 0;
+        this.totalHeight = items.length * itemHeight;
+        
+        this.setupVirtualScroll();
+    }
+    
+    setupVirtualScroll() {
+        // 컨테이너 스타일 설정
+        this.container.style.position = 'relative';
+        this.container.style.overflow = 'auto';
+        
+        // 가상 스크롤 영역 생성
+        const virtualSpace = document.createElement('div');
+        virtualSpace.style.height = `${this.totalHeight}px`;
+        virtualSpace.style.position = 'relative';
+        this.container.appendChild(virtualSpace);
+        
+        // 스크롤 이벤트 처리
+        this.container.addEventListener('scroll', () => {
+            this.scrollTop = this.container.scrollTop;
+            this.render();
+        });
+        
+        // 초기 렌더링
+        this.render();
+    }
+    
+    render() {
+        const startIndex = Math.floor(this.scrollTop / this.itemHeight);
+        const endIndex = Math.min(startIndex + this.visibleItems + 1, this.items.length);
+        
+        // 기존 아이템 제거
+        while (this.container.firstChild) {
+            this.container.removeChild(this.container.firstChild);
+        }
+        
+        // 가상 스크롤 영역 다시 추가
+        const virtualSpace = document.createElement('div');
+        virtualSpace.style.height = `${this.totalHeight}px`;
+        virtualSpace.style.position = 'relative';
+        this.container.appendChild(virtualSpace);
+        
+        // 현재 보이는 아이템만 렌더링
+        for (let i = startIndex; i < endIndex; i++) {
+            const item = this.items[i];
+            const element = createShortcutCard(item);
+            element.style.position = 'absolute';
+            element.style.top = `${i * this.itemHeight}px`;
+            element.style.width = '100%';
+            this.container.appendChild(element);
+        }
+    }
+    
+    updateItems(newItems) {
+        this.items = newItems;
+        this.totalHeight = this.items.length * this.itemHeight;
+        this.render();
+    }
+}
+
+// 단축키 렌더링 개선
 function renderShortcuts(shortcuts) {
     shortcutsContainer.innerHTML = '';
     
@@ -195,21 +321,26 @@ function renderShortcuts(shortcuts) {
         return;
     }
 
-    shortcuts.forEach(shortcut => {
-        const card = createShortcutCard(shortcut);
-        shortcutsContainer.appendChild(card);
-    });
+    // 가상 스크롤러 초기화
+    if (!window.virtualScroller) {
+        window.virtualScroller = new VirtualScroller(
+            shortcutsContainer,
+            shortcuts,
+            120 // 카드 높이 (px)
+        );
+    } else {
+        window.virtualScroller.updateItems(shortcuts);
+    }
 }
 
-// 검색 기능 개선
+// 검색 기능 최적화
 function searchShortcuts(query) {
     searchDebug.log('Searching with query:', query);
     
     // 검색어가 비어있으면 모든 단축키 표시
     if (!query.trim()) {
         searchDebug.log('Empty query, showing all shortcuts');
-        const allShortcuts = shortcutsData.categories.flatMap(category => category.shortcuts);
-        renderShortcuts(allShortcuts);
+        renderShortcuts(cache.getAllShortcuts());
         return;
     }
 
@@ -226,37 +357,8 @@ function searchShortcuts(query) {
         searchDebug.log('Updated search history:', searchHistory);
     }
 
-    // 검색 실행
-    const allShortcuts = shortcutsData.categories.flatMap(category => category.shortcuts);
-    const filtered = allShortcuts.filter(shortcut => {
-        // 설명 검색
-        const descriptionMatch = shortcut.description.toLowerCase().includes(query);
-        
-        // 키 조합 검색
-        const keysMatch = shortcut.keys.some(key => key.toLowerCase().includes(query));
-        
-        // 카테고리 검색
-        const categoryMatch = shortcut.category.toLowerCase().includes(query);
-        
-        // 난이도 검색
-        const difficultyMatch = shortcut.difficulty.toLowerCase().includes(query);
-        
-        // 사용빈도 검색
-        const usageMatch = shortcut.usage.toLowerCase().includes(query);
-
-        const matches = descriptionMatch || keysMatch || categoryMatch || difficultyMatch || usageMatch;
-        if (matches) {
-            searchDebug.log(`Match found for "${shortcut.description}"`, {
-                descriptionMatch,
-                keysMatch,
-                categoryMatch,
-                difficultyMatch,
-                usageMatch
-            });
-        }
-
-        return matches;
-    });
+    // 캐시된 검색 결과 사용
+    const filtered = cache.getSearchResults(query);
 
     // 검색 결과 분석
     searchDebug.analyzeSearchResults(query, filtered);
@@ -366,34 +468,26 @@ searchInput.addEventListener('blur', () => {
     }, 200);
 });
 
-// 카테고리 필터링
+// 필터링 최적화
 function filterByCategory(categoryId) {
-    if (categoryId === 'all') {
-        const allShortcuts = shortcutsData.categories.flatMap(category => category.shortcuts);
-        renderShortcuts(allShortcuts);
-    } else {
-        const category = shortcutsData.categories.find(c => c.id === categoryId);
-        if (category) {
-            renderShortcuts(category.shortcuts);
-        }
-    }
-}
-
-// 난이도 필터링
-function filterByDifficulty(difficulty) {
-    const allShortcuts = shortcutsData.categories.flatMap(category => category.shortcuts);
-    const filtered = allShortcuts.filter(shortcut => shortcut.difficulty === difficulty);
+    const filtered = cache.getFilteredShortcuts(categoryId, difficultyFilter.value);
     renderShortcuts(filtered);
 }
 
-// 이벤트 리스너 설정
+function filterByDifficulty(difficulty) {
+    const filtered = cache.getFilteredShortcuts(categoryFilter.value, difficulty);
+    renderShortcuts(filtered);
+}
+
+// 이벤트 리스너 최적화
 document.addEventListener('DOMContentLoaded', () => {
     // 초기 렌더링
     populateCategoryFilter();
-    renderShortcuts(shortcutsData.categories.flatMap(category => category.shortcuts));
+    renderShortcuts(cache.getAllShortcuts());
     updateStats();
 
-    // 검색 이벤트
+    // 검색 이벤트 (디바운스 적용)
+    let searchTimeout;
     searchInput.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
@@ -401,23 +495,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     });
 
+    // 검색 버튼 클릭 이벤트
     searchBtn.addEventListener('click', () => {
         searchShortcuts(searchInput.value);
     });
 
-    // 필터 이벤트
-    categoryFilter.addEventListener('change', (e) => {
-        filterByCategory(e.target.value);
-    });
+    // 필터 이벤트 (쓰로틀링 적용)
+    let filterTimeout;
+    const handleFilterChange = () => {
+        clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(() => {
+            const categoryId = categoryFilter.value;
+            const difficulty = difficultyFilter.value;
+            const filtered = cache.getFilteredShortcuts(categoryId, difficulty);
+            renderShortcuts(filtered);
+        }, 100);
+    };
 
-    difficultyFilter.addEventListener('change', (e) => {
-        if (e.target.value === 'all') {
-            const allShortcuts = shortcutsData.categories.flatMap(category => category.shortcuts);
-            renderShortcuts(allShortcuts);
-        } else {
-            filterByDifficulty(e.target.value);
-        }
-    });
+    categoryFilter.addEventListener('change', handleFilterChange);
+    difficultyFilter.addEventListener('change', handleFilterChange);
 
     // 네비게이션 이벤트
     document.querySelectorAll('.nav-link').forEach(link => {
