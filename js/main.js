@@ -124,7 +124,7 @@ function isMemorized(shortcutId) {
     return !!memorizedShortcuts[shortcutId];
 }
 
-// 단축키 카드 생성 (체크박스 추가)
+// 단축키 카드 생성 (체크박스 추가, 체크 시 '외웠음!' 메시지만 남김)
 function createShortcutCard(shortcut) {
     const card = document.createElement('div');
     card.className = `shortcut-card ${shortcut.difficulty}`;
@@ -144,7 +144,6 @@ function createShortcutCard(shortcut) {
     // 카드 내용
     const content = document.createElement('div');
     content.className = 'shortcut-content';
-    content.style.display = checked ? 'none' : '';
     content.innerHTML = `
         <div class="card-header">
             <h3>${shortcut.description}</h3>
@@ -169,15 +168,33 @@ function createShortcutCard(shortcut) {
         </div>
     `;
 
+    // 외웠음 메시지
+    const memorizedMsg = document.createElement('div');
+    memorizedMsg.className = 'memorized-msg';
+    memorizedMsg.textContent = '외웠음!';
+    memorizedMsg.style.display = checked ? '' : 'none';
+    memorizedMsg.style.textAlign = 'center';
+    memorizedMsg.style.fontWeight = 'bold';
+    memorizedMsg.style.fontSize = '1.2rem';
+    memorizedMsg.style.color = '#2ecc71';
+    memorizedMsg.style.margin = '2rem 0';
+
     // 체크박스 이벤트
     checkbox.addEventListener('change', () => {
         setMemorized(shortcut.id, checkbox.checked);
-        content.style.display = checkbox.checked ? 'none' : '';
+        if (checkbox.checked) {
+            content.style.display = 'none';
+            memorizedMsg.style.display = '';
+        } else {
+            content.style.display = '';
+            memorizedMsg.style.display = 'none';
+        }
     });
 
-    // 카드 최상단에 체크박스 추가
+    // 카드 최상단에 체크박스, 아래에 내용/메시지 추가
     card.appendChild(checkbox);
     card.appendChild(content);
+    card.appendChild(memorizedMsg);
 
     // 기존 학습/즐겨찾기 버튼 이벤트 연결
     const learnBtn = content.querySelector('.learn-btn');
