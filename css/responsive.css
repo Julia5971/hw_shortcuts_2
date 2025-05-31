@@ -1,0 +1,42 @@
+/* Tablet styles */
+@media screen and (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    #shortcuts-container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+/* Mobile styles */
+@media screen and (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    #shortcuts-container {
+        grid-template-columns: 1fr;
+    }
+
+    main {
+        margin: 1rem auto;
+    }
+
+    #search-input {
+        padding: 0.6rem;
+    }
+}
+
+/* Large screen styles */
+@media screen and (min-width: 1200px) {
+    main {
+        padding: 0 2rem;
+    }
+
+    #shortcuts-container {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+} 

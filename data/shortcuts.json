@@ -1,0 +1,94 @@
+{
+    "categories": [
+        {
+            "id": "windows",
+            "name": "Windows",
+            "shortcuts": [
+                {
+                    "id": "win-d",
+                    "keys": ["Win", "D"],
+                    "description": "바탕화면 표시/숨기기",
+                    "category": "windows",
+                    "learned": false,
+                    "favorite": false
+                },
+                {
+                    "id": "win-e",
+                    "keys": ["Win", "E"],
+                    "description": "파일 탐색기 열기",
+                    "category": "windows",
+                    "learned": false,
+                    "favorite": false
+                },
+                {
+                    "id": "win-l",
+                    "keys": ["Win", "L"],
+                    "description": "화면 잠금",
+                    "category": "windows",
+                    "learned": false,
+                    "favorite": false
+                }
+            ]
+        },
+        {
+            "id": "vscode",
+            "name": "VS Code",
+            "shortcuts": [
+                {
+                    "id": "vscode-format",
+                    "keys": ["Shift", "Alt", "F"],
+                    "description": "코드 포맷팅",
+                    "category": "vscode",
+                    "learned": false,
+                    "favorite": false
+                },
+                {
+                    "id": "vscode-search",
+                    "keys": ["Ctrl", "F"],
+                    "description": "파일 내 검색",
+                    "category": "vscode",
+                    "learned": false,
+                    "favorite": false
+                },
+                {
+                    "id": "vscode-quick-open",
+                    "keys": ["Ctrl", "P"],
+                    "description": "파일 빠른 열기",
+                    "category": "vscode",
+                    "learned": false,
+                    "favorite": false
+                }
+            ]
+        },
+        {
+            "id": "chrome",
+            "name": "Chrome",
+            "shortcuts": [
+                {
+                    "id": "chrome-new-tab",
+                    "keys": ["Ctrl", "T"],
+                    "description": "새 탭 열기",
+                    "category": "chrome",
+                    "learned": false,
+                    "favorite": false
+                },
+                {
+                    "id": "chrome-close-tab",
+                    "keys": ["Ctrl", "W"],
+                    "description": "현재 탭 닫기",
+                    "category": "chrome",
+                    "learned": false,
+                    "favorite": false
+                },
+                {
+                    "id": "chrome-reload",
+                    "keys": ["Ctrl", "R"],
+                    "description": "페이지 새로고침",
+                    "category": "chrome",
+                    "learned": false,
+                    "favorite": false
+                }
+            ]
+        }
+    ]
+} 
