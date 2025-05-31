@@ -3,6 +3,7 @@
         {
             "id": "windows",
             "name": "Windows",
+            "description": "Windows 운영체제 기본 단축키",
             "shortcuts": [
                 {
                     "id": "win-d",
@@ -10,7 +11,9 @@
                     "description": "바탕화면 표시/숨기기",
                     "category": "windows",
                     "learned": false,
-                    "favorite": false
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
                 },
                 {
                     "id": "win-e",
@@ -18,7 +21,9 @@
                     "description": "파일 탐색기 열기",
                     "category": "windows",
                     "learned": false,
-                    "favorite": false
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
                 },
                 {
                     "id": "win-l",
@@ -26,13 +31,36 @@
                     "description": "화면 잠금",
                     "category": "windows",
                     "learned": false,
-                    "favorite": false
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
+                },
+                {
+                    "id": "win-tab",
+                    "keys": ["Win", "Tab"],
+                    "description": "작업 보기",
+                    "category": "windows",
+                    "learned": false,
+                    "favorite": false,
+                    "difficulty": "medium",
+                    "usage": "medium"
+                },
+                {
+                    "id": "win-shift-s",
+                    "keys": ["Win", "Shift", "S"],
+                    "description": "스크린샷 도구 실행",
+                    "category": "windows",
+                    "learned": false,
+                    "favorite": false,
+                    "difficulty": "medium",
+                    "usage": "high"
                 }
             ]
         },
         {
             "id": "vscode",
             "name": "VS Code",
+            "description": "Visual Studio Code 에디터 단축키",
             "shortcuts": [
                 {
                     "id": "vscode-format",
@@ -40,7 +68,9 @@
                     "description": "코드 포맷팅",
                     "category": "vscode",
                     "learned": false,
-                    "favorite": false
+                    "favorite": false,
+                    "difficulty": "medium",
+                    "usage": "high"
                 },
                 {
                     "id": "vscode-search",
@@ -48,7 +78,9 @@
                     "description": "파일 내 검색",
                     "category": "vscode",
                     "learned": false,
-                    "favorite": false
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
                 },
                 {
                     "id": "vscode-quick-open",
@@ -56,13 +88,36 @@
                     "description": "파일 빠른 열기",
                     "category": "vscode",
                     "learned": false,
-                    "favorite": false
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
+                },
+                {
+                    "id": "vscode-multi-cursor",
+                    "keys": ["Alt", "Click"],
+                    "description": "여러 커서 추가",
+                    "category": "vscode",
+                    "learned": false,
+                    "favorite": false,
+                    "difficulty": "medium",
+                    "usage": "medium"
+                },
+                {
+                    "id": "vscode-terminal",
+                    "keys": ["Ctrl", "`"],
+                    "description": "통합 터미널 토글",
+                    "category": "vscode",
+                    "learned": false,
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
                 }
             ]
         },
         {
             "id": "chrome",
             "name": "Chrome",
+            "description": "Google Chrome 브라우저 단축키",
             "shortcuts": [
                 {
                     "id": "chrome-new-tab",
@@ -70,7 +125,9 @@
                     "description": "새 탭 열기",
                     "category": "chrome",
                     "learned": false,
-                    "favorite": false
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
                 },
                 {
                     "id": "chrome-close-tab",
@@ -78,7 +135,9 @@
                     "description": "현재 탭 닫기",
                     "category": "chrome",
                     "learned": false,
-                    "favorite": false
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
                 },
                 {
                     "id": "chrome-reload",
@@ -86,7 +145,66 @@
                     "description": "페이지 새로고침",
                     "category": "chrome",
                     "learned": false,
-                    "favorite": false
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
+                },
+                {
+                    "id": "chrome-incognito",
+                    "keys": ["Ctrl", "Shift", "N"],
+                    "description": "시크릿 모드 창 열기",
+                    "category": "chrome",
+                    "learned": false,
+                    "favorite": false,
+                    "difficulty": "medium",
+                    "usage": "medium"
+                },
+                {
+                    "id": "chrome-bookmarks",
+                    "keys": ["Ctrl", "Shift", "O"],
+                    "description": "북마크 관리자 열기",
+                    "category": "chrome",
+                    "learned": false,
+                    "favorite": false,
+                    "difficulty": "medium",
+                    "usage": "low"
+                }
+            ]
+        },
+        {
+            "id": "cursor",
+            "name": "Cursor",
+            "description": "Cursor IDE 단축키",
+            "shortcuts": [
+                {
+                    "id": "cursor-ai-chat",
+                    "keys": ["Ctrl", "K"],
+                    "description": "AI 채팅 열기",
+                    "category": "cursor",
+                    "learned": false,
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "high"
+                },
+                {
+                    "id": "cursor-ai-edit",
+                    "keys": ["Ctrl", "L"],
+                    "description": "AI 편집 모드",
+                    "category": "cursor",
+                    "learned": false,
+                    "favorite": false,
+                    "difficulty": "medium",
+                    "usage": "high"
+                },
+                {
+                    "id": "cursor-ai-explain",
+                    "keys": ["Ctrl", "Shift", "E"],
+                    "description": "코드 설명 요청",
+                    "category": "cursor",
+                    "learned": false,
+                    "favorite": false,
+                    "difficulty": "easy",
+                    "usage": "medium"
                 }
             ]
         }

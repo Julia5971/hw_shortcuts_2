@@ -1,68 +1,82 @@
 // 단축키 데이터 구조
 const shortcutsData = {
-    categories: [
-        {
-            id: 'windows',
-            name: 'Windows',
-            shortcuts: [
-                {
-                    id: 'win-d',
-                    keys: ['Win', 'D'],
-                    description: '바탕화면 표시/숨기기',
-                    category: 'windows',
-                    learned: false,
-                    favorite: false
-                },
-                {
-                    id: 'win-e',
-                    keys: ['Win', 'E'],
-                    description: '파일 탐색기 열기',
-                    category: 'windows',
-                    learned: false,
-                    favorite: false
-                }
-            ]
-        },
-        {
-            id: 'vscode',
-            name: 'VS Code',
-            shortcuts: [
-                {
-                    id: 'vscode-format',
-                    keys: ['Shift', 'Alt', 'F'],
-                    description: '코드 포맷팅',
-                    category: 'vscode',
-                    learned: false,
-                    favorite: false
-                },
-                {
-                    id: 'vscode-search',
-                    keys: ['Ctrl', 'F'],
-                    description: '파일 내 검색',
-                    category: 'vscode',
-                    learned: false,
-                    favorite: false
-                }
-            ]
-        }
-    ]
+    categories: [],
+    userStats: {
+        totalShortcuts: 0,
+        learnedShortcuts: 0,
+        favoriteShortcuts: 0,
+        lastUpdated: null
+    }
 };
 
 // LocalStorage 관련 함수들
 const storage = {
     saveData: function() {
         localStorage.setItem('shortcutsData', JSON.stringify(shortcutsData));
+        this.updateUserStats();
     },
 
     loadData: function() {
         const savedData = localStorage.getItem('shortcutsData');
         if (savedData) {
             Object.assign(shortcutsData, JSON.parse(savedData));
+        } else {
+            // 초기 데이터 로드
+            fetch('data/shortcuts.json')
+                .then(response => response.json())
+                .then(data => {
+                    shortcutsData.categories = data.categories;
+                    this.updateUserStats();
+                    this.saveData();
+                })
+                .catch(error => console.error('Error loading shortcuts data:', error));
         }
     },
 
     clearData: function() {
         localStorage.removeItem('shortcutsData');
+        this.loadData(); // 초기 데이터로 리셋
+    },
+
+    updateUserStats: function() {
+        const allShortcuts = shortcutsData.categories.flatMap(category => category.shortcuts);
+        shortcutsData.userStats = {
+            totalShortcuts: allShortcuts.length,
+            learnedShortcuts: allShortcuts.filter(s => s.learned).length,
+            favoriteShortcuts: allShortcuts.filter(s => s.favorite).length,
+            lastUpdated: new Date().toISOString()
+        };
+    },
+
+    // 카테고리별 통계
+    getCategoryStats: function() {
+        return shortcutsData.categories.map(category => ({
+            id: category.id,
+            name: category.name,
+            total: category.shortcuts.length,
+            learned: category.shortcuts.filter(s => s.learned).length,
+            favorite: category.shortcuts.filter(s => s.favorite).length
+        }));
+    },
+
+    // 난이도별 통계
+    getDifficultyStats: function() {
+        const allShortcuts = shortcutsData.categories.flatMap(category => category.shortcuts);
+        const stats = {
+            easy: { total: 0, learned: 0 },
+            medium: { total: 0, learned: 0 },
+            hard: { total: 0, learned: 0 }
+        };
+
+        allShortcuts.forEach(shortcut => {
+            const difficulty = shortcut.difficulty || 'medium';
+            stats[difficulty].total++;
+            if (shortcut.learned) {
+                stats[difficulty].learned++;
+            }
+        });
+
+        return stats;
     }
 };
 

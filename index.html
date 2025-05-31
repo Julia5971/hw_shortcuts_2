@@ -6,22 +6,57 @@
     <title>단축키 학습 센터</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>단축키 학습 센터</h1>
-        <nav>
-            <ul>
-                <li><a href="#home">홈</a></li>
-                <li><a href="#categories">카테고리</a></li>
-                <li><a href="#favorites">즐겨찾기</a></li>
-            </ul>
-        </nav>
+        <div class="header-content">
+            <h1><i class="fas fa-keyboard"></i> 단축키 학습 센터</h1>
+            <nav>
+                <ul>
+                    <li><a href="#home" class="active"><i class="fas fa-home"></i> 홈</a></li>
+                    <li><a href="#categories"><i class="fas fa-th-large"></i> 카테고리</a></li>
+                    <li><a href="#favorites"><i class="fas fa-star"></i> 즐겨찾기</a></li>
+                    <li><a href="#stats"><i class="fas fa-chart-bar"></i> 통계</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
     <main>
         <section id="search-section">
-            <input type="text" id="search-input" placeholder="단축키 검색...">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="단축키 검색...">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="filter-container">
+                <select id="category-filter">
+                    <option value="all">모든 카테고리</option>
+                </select>
+                <select id="difficulty-filter">
+                    <option value="all">모든 난이도</option>
+                    <option value="easy">쉬움</option>
+                    <option value="medium">보통</option>
+                    <option value="hard">어려움</option>
+                </select>
+            </div>
+        </section>
+
+        <section id="stats-section" class="hidden">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>전체 단축키</h3>
+                    <p id="total-shortcuts">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>학습 완료</h3>
+                    <p id="learned-shortcuts">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>즐겨찾기</h3>
+                    <p id="favorite-shortcuts">0</p>
+                </div>
+            </div>
         </section>
 
         <section id="shortcuts-container">
@@ -30,7 +65,14 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 단축키 학습 센터. All rights reserved.</p>
+        <div class="footer-content">
+            <p>&copy; 2024 단축키 학습 센터. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#about">소개</a>
+                <a href="#help">도움말</a>
+                <a href="#contact">문의하기</a>
+            </div>
+        </div>
     </footer>
 
     <script src="js/data.js"></script>
