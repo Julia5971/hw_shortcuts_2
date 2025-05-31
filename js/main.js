@@ -114,25 +114,46 @@ function updateStats() {
     });
 }
 
-// 단축키 카드 생성
+// 외운 단축키 체크 상태 관리
+const memorizedShortcuts = JSON.parse(localStorage.getItem('memorizedShortcuts') || '{}');
+function setMemorized(shortcutId, value) {
+    memorizedShortcuts[shortcutId] = value;
+    localStorage.setItem('memorizedShortcuts', JSON.stringify(memorizedShortcuts));
+}
+function isMemorized(shortcutId) {
+    return !!memorizedShortcuts[shortcutId];
+}
+
+// 단축키 카드 생성 (체크박스 추가)
 function createShortcutCard(shortcut) {
     const card = document.createElement('div');
     card.className = `shortcut-card ${shortcut.difficulty}`;
     card.dataset.id = shortcut.id;
 
-    const isLearned = learningManager.isLearned(shortcut.id);
-    const isFavorite = learningManager.isFavorite(shortcut.id);
-    const progress = learningManager.getProgress(shortcut.id);
+    // 체크박스 UI
+    const checked = isMemorized(shortcut.id);
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'memorize-checkbox';
+    checkbox.checked = checked;
+    checkbox.title = '외웠으면 체크!';
+    checkbox.style.marginRight = '0.5rem';
+    checkbox.style.transform = 'scale(1.3)';
+    checkbox.style.cursor = 'pointer';
 
-    card.innerHTML = `
+    // 카드 내용
+    const content = document.createElement('div');
+    content.className = 'shortcut-content';
+    content.style.display = checked ? 'none' : '';
+    content.innerHTML = `
         <div class="card-header">
             <h3>${shortcut.description}</h3>
             <div class="card-actions">
-                <button class="learn-btn ${isLearned ? 'learned' : ''}" title="${isLearned ? '학습 완료' : '학습하기'}">
-                    <i class="fas ${isLearned ? 'fa-check-circle' : 'fa-circle'}"></i>
+                <button class="learn-btn ${learningManager.isLearned(shortcut.id) ? 'learned' : ''}" title="${learningManager.isLearned(shortcut.id) ? '학습 완료' : '학습하기'}">
+                    <i class="fas ${learningManager.isLearned(shortcut.id) ? 'fa-check-circle' : 'fa-circle'}"></i>
                 </button>
-                <button class="favorite-btn ${isFavorite ? 'favorited' : ''}" title="${isFavorite ? '즐겨찾기 해제' : '즐겨찾기'}">
-                    <i class="fas ${isFavorite ? 'fa-star' : 'fa-star-o'}"></i>
+                <button class="favorite-btn ${learningManager.isFavorite(shortcut.id) ? 'favorited' : ''}" title="${learningManager.isFavorite(shortcut.id) ? '즐겨찾기 해제' : '즐겨찾기'}">
+                    <i class="fas ${learningManager.isFavorite(shortcut.id) ? 'fa-star' : 'fa-star-o'}"></i>
                 </button>
             </div>
         </div>
@@ -145,19 +166,21 @@ function createShortcutCard(shortcut) {
                 <span class="difficulty ${shortcut.difficulty}">${shortcut.difficulty}</span>
                 <span class="usage">${shortcut.usage}</span>
             </div>
-            ${progress ? `
-                <div class="progress-info">
-                    <div class="progress-bar">
-                        <div class="progress" style="width: ${(progress.attempts / 10) * 100}%"></div>
-                    </div>
-                    <span class="attempts">시도: ${progress.attempts}</span>
-                </div>
-            ` : ''}
         </div>
     `;
 
-    // 학습 버튼 이벤트
-    const learnBtn = card.querySelector('.learn-btn');
+    // 체크박스 이벤트
+    checkbox.addEventListener('change', () => {
+        setMemorized(shortcut.id, checkbox.checked);
+        content.style.display = checkbox.checked ? 'none' : '';
+    });
+
+    // 카드 최상단에 체크박스 추가
+    card.appendChild(checkbox);
+    card.appendChild(content);
+
+    // 기존 학습/즐겨찾기 버튼 이벤트 연결
+    const learnBtn = content.querySelector('.learn-btn');
     learnBtn.addEventListener('click', () => {
         learningManager.toggleLearned(shortcut.id);
         learnBtn.classList.toggle('learned');
@@ -166,9 +189,7 @@ function createShortcutCard(shortcut) {
         learnBtn.title = learnBtn.classList.contains('learned') ? '학습 완료' : '학습하기';
         updateStats();
     });
-
-    // 즐겨찾기 버튼 이벤트
-    const favoriteBtn = card.querySelector('.favorite-btn');
+    const favoriteBtn = content.querySelector('.favorite-btn');
     favoriteBtn.addEventListener('click', () => {
         learningManager.toggleFavorite(shortcut.id);
         favoriteBtn.classList.toggle('favorited');
@@ -177,7 +198,6 @@ function createShortcutCard(shortcut) {
         favoriteBtn.title = favoriteBtn.classList.contains('favorited') ? '즐겨찾기 해제' : '즐겨찾기';
         updateStats();
     });
-
     return card;
 }
 

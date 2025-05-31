@@ -6,44 +6,84 @@
             "description": "Windows 운영체제 기본 단축키",
             "shortcuts": [
                 {
-                    "id": "win-d",
-                    "keys": ["Win", "D"],
-                    "description": "바탕화면 표시/숨기기",
+                    "id": "win-start",
+                    "description": "시작 메뉴 열기/닫기",
+                    "keys": ["Win"],
                     "category": "windows",
-                    "learned": false,
-                    "favorite": false,
                     "difficulty": "easy",
-                    "usage": "high"
+                    "usage": "매우 자주"
+                },
+                {
+                    "id": "win-d",
+                    "description": "바탕 화면 표시 또는 숨기기 (모든 창 최소화/복원)",
+                    "keys": ["Win", "D"],
+                    "category": "windows",
+                    "difficulty": "easy",
+                    "usage": "매우 자주"
                 },
                 {
                     "id": "win-e",
-                    "keys": ["Win", "E"],
                     "description": "파일 탐색기 열기",
+                    "keys": ["Win", "E"],
                     "category": "windows",
-                    "learned": false,
-                    "favorite": false,
                     "difficulty": "easy",
-                    "usage": "high"
+                    "usage": "매우 자주"
                 },
                 {
                     "id": "win-l",
+                    "description": "PC 잠금 또는 계정 전환",
                     "keys": ["Win", "L"],
-                    "description": "화면 잠금",
                     "category": "windows",
-                    "learned": false,
-                    "favorite": false,
                     "difficulty": "easy",
-                    "usage": "high"
+                    "usage": "자주"
+                },
+                {
+                    "id": "win-r",
+                    "description": "실행 대화 상자 열기",
+                    "keys": ["Win", "R"],
+                    "category": "windows",
+                    "difficulty": "easy",
+                    "usage": "자주"
+                },
+                {
+                    "id": "win-s",
+                    "description": "검색 열기",
+                    "keys": ["Win", "S"],
+                    "category": "windows",
+                    "difficulty": "easy",
+                    "usage": "자주"
                 },
                 {
                     "id": "win-tab",
+                    "description": "작업 보기 (열려 있는 모든 창 및 가상 데스크톱 보기)",
                     "keys": ["Win", "Tab"],
-                    "description": "작업 보기",
                     "category": "windows",
-                    "learned": false,
-                    "favorite": false,
                     "difficulty": "medium",
-                    "usage": "medium"
+                    "usage": "보통"
+                },
+                {
+                    "id": "win-i",
+                    "description": "설정 열기",
+                    "keys": ["Win", "I"],
+                    "category": "windows",
+                    "difficulty": "easy",
+                    "usage": "보통"
+                },
+                {
+                    "id": "win-x",
+                    "description": "빠른 링크 메뉴 열기 (고급 사용자 메뉴: 장치 관리자, PowerShell 등 접근)",
+                    "keys": ["Win", "X"],
+                    "category": "windows",
+                    "difficulty": "medium",
+                    "usage": "가끔"
+                },
+                {
+                    "id": "win-pause",
+                    "description": "시스템 속성 대화 상자 표시",
+                    "keys": ["Win", "Pause/Break"],
+                    "category": "windows",
+                    "difficulty": "hard",
+                    "usage": "가끔"
                 },
                 {
                     "id": "win-shift-s",
@@ -54,6 +94,22 @@
                     "favorite": false,
                     "difficulty": "medium",
                     "usage": "high"
+                },
+                {
+                    "id": "win-1",
+                    "description": "작업 표시줄에 고정된 앱 실행",
+                    "keys": ["Win", "1~9"],
+                    "category": "windows",
+                    "difficulty": "easy",
+                    "usage": "빠른 앱 실행"
+                },
+                {
+                    "id": "win-2",
+                    "description": "바탕화면 보기",
+                    "keys": ["Win", "D"],
+                    "category": "windows",
+                    "difficulty": "easy",
+                    "usage": "창 최소화/복원"
                 }
             ]
         },
@@ -111,6 +167,22 @@
                     "favorite": false,
                     "difficulty": "easy",
                     "usage": "high"
+                },
+                {
+                    "id": "vscode-1",
+                    "description": "명령 팔레트 열기",
+                    "keys": ["Ctrl", "Shift", "P"],
+                    "category": "vscode",
+                    "difficulty": "easy",
+                    "usage": "명령어 검색"
+                },
+                {
+                    "id": "vscode-2",
+                    "description": "파일 찾기",
+                    "keys": ["Ctrl", "P"],
+                    "category": "vscode",
+                    "difficulty": "easy",
+                    "usage": "빠른 파일 이동"
                 }
             ]
         },
@@ -168,6 +240,22 @@
                     "favorite": false,
                     "difficulty": "medium",
                     "usage": "low"
+                },
+                {
+                    "id": "chrome-1",
+                    "description": "새 탭 열기",
+                    "keys": ["Ctrl", "T"],
+                    "category": "chrome",
+                    "difficulty": "easy",
+                    "usage": "탭 관리"
+                },
+                {
+                    "id": "chrome-2",
+                    "description": "마지막에 닫은 탭 다시 열기",
+                    "keys": ["Ctrl", "Shift", "T"],
+                    "category": "chrome",
+                    "difficulty": "medium",
+                    "usage": "탭 복구"
                 }
             ]
         },
@@ -343,6 +431,29 @@
                     "category": "텍스트 편집",
                     "difficulty": "medium",
                     "usage": "자주"
+                }
+            ]
+        },
+        {
+            "id": "photoshop",
+            "name": "Photoshop",
+            "description": "Adobe Photoshop 단축키",
+            "shortcuts": [
+                {
+                    "id": "ps-1",
+                    "description": "새 레이어 만들기",
+                    "keys": ["Ctrl", "Shift", "N"],
+                    "category": "photoshop",
+                    "difficulty": "easy",
+                    "usage": "레이어 관리"
+                },
+                {
+                    "id": "ps-2",
+                    "description": "이전 단계로 되돌리기",
+                    "keys": ["Ctrl", "Alt", "Z"],
+                    "category": "photoshop",
+                    "difficulty": "medium",
+                    "usage": "실행 취소"
                 }
             ]
         }
