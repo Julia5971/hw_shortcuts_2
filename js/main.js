@@ -14,6 +14,62 @@ let searchTimeout;
 let lastSearchQuery = '';
 let searchHistory = [];
 
+// 검색 디버깅
+const searchDebug = {
+    enabled: false,
+    
+    log: function(message, data = null) {
+        if (!this.enabled) return;
+        console.log(`[Search Debug] ${message}`, data || '');
+    },
+    
+    error: function(message, error = null) {
+        if (!this.enabled) return;
+        console.error(`[Search Debug Error] ${message}`, error || '');
+    },
+    
+    // 검색 결과 분석
+    analyzeSearchResults: function(query, results) {
+        if (!this.enabled) return;
+        
+        console.log('=== Search Analysis ===');
+        console.log('Query:', query);
+        console.log('Results count:', results.length);
+        
+        // 카테고리별 결과 수
+        const categoryCount = {};
+        results.forEach(shortcut => {
+            categoryCount[shortcut.category] = (categoryCount[shortcut.category] || 0) + 1;
+        });
+        console.log('Results by category:', categoryCount);
+        
+        // 난이도별 결과 수
+        const difficultyCount = {
+            easy: 0,
+            medium: 0,
+            hard: 0
+        };
+        results.forEach(shortcut => {
+            difficultyCount[shortcut.difficulty]++;
+        });
+        console.log('Results by difficulty:', difficultyCount);
+        
+        // 검색어 매칭 분석
+        results.forEach(shortcut => {
+            const matches = {
+                description: shortcut.description.toLowerCase().includes(query.toLowerCase()),
+                keys: shortcut.keys.some(key => key.toLowerCase().includes(query.toLowerCase())),
+                category: shortcut.category.toLowerCase().includes(query.toLowerCase()),
+                difficulty: shortcut.difficulty.toLowerCase().includes(query.toLowerCase()),
+                usage: shortcut.usage.toLowerCase().includes(query.toLowerCase())
+            };
+            console.log(`Matching analysis for "${shortcut.description}":`, matches);
+        });
+        
+        console.log('=====================');
+    }
+};
+
 // 카테고리 필터 옵션 생성
 function populateCategoryFilter() {
     shortcutsData.categories.forEach(category => {
@@ -147,8 +203,11 @@ function renderShortcuts(shortcuts) {
 
 // 검색 기능 개선
 function searchShortcuts(query) {
+    searchDebug.log('Searching with query:', query);
+    
     // 검색어가 비어있으면 모든 단축키 표시
     if (!query.trim()) {
+        searchDebug.log('Empty query, showing all shortcuts');
         const allShortcuts = shortcutsData.categories.flatMap(category => category.shortcuts);
         renderShortcuts(allShortcuts);
         return;
@@ -156,6 +215,7 @@ function searchShortcuts(query) {
 
     // 검색어를 소문자로 변환
     query = query.toLowerCase();
+    searchDebug.log('Normalized query:', query);
 
     // 검색 기록에 추가
     if (query !== lastSearchQuery) {
@@ -163,6 +223,7 @@ function searchShortcuts(query) {
         if (searchHistory.length > 10) searchHistory.pop();
         localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
         lastSearchQuery = query;
+        searchDebug.log('Updated search history:', searchHistory);
     }
 
     // 검색 실행
@@ -183,20 +244,37 @@ function searchShortcuts(query) {
         // 사용빈도 검색
         const usageMatch = shortcut.usage.toLowerCase().includes(query);
 
-        return descriptionMatch || keysMatch || categoryMatch || difficultyMatch || usageMatch;
+        const matches = descriptionMatch || keysMatch || categoryMatch || difficultyMatch || usageMatch;
+        if (matches) {
+            searchDebug.log(`Match found for "${shortcut.description}"`, {
+                descriptionMatch,
+                keysMatch,
+                categoryMatch,
+                difficultyMatch,
+                usageMatch
+            });
+        }
+
+        return matches;
     });
+
+    // 검색 결과 분석
+    searchDebug.analyzeSearchResults(query, filtered);
 
     // 검색 결과 표시
     renderShortcuts(filtered);
 
     // 검색 결과 없음 처리
     if (filtered.length === 0) {
+        searchDebug.log('No results found');
         showNoResultsMessage(query);
     }
 }
 
 // 검색 결과 없음 메시지 표시
 function showNoResultsMessage(query) {
+    searchDebug.log('Showing no results message for query:', query);
+    
     const message = document.createElement('div');
     message.className = 'no-results';
     message.innerHTML = `
@@ -217,8 +295,15 @@ function showNoResultsMessage(query) {
 
 // 검색 기록 표시
 function showSearchHistory() {
+    searchDebug.log('Showing search history');
+    
     const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
-    if (history.length === 0) return;
+    if (history.length === 0) {
+        searchDebug.log('No search history found');
+        return;
+    }
+
+    searchDebug.log('Found search history:', history);
 
     const historyContainer = document.createElement('div');
     historyContainer.className = 'search-history';
@@ -241,6 +326,7 @@ function showSearchHistory() {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const query = e.target.textContent.trim();
+            searchDebug.log('History item clicked:', query);
             searchInput.value = query;
             searchShortcuts(query);
         });
@@ -354,4 +440,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.classList.add('active');
         });
     });
+
+    // 초기화 시 검색 디버깅 활성화
+    searchDebug.enabled = true;
+    searchDebug.log('Search debug mode enabled');
 }); 

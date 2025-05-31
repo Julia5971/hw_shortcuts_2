@@ -207,6 +207,144 @@
                     "usage": "medium"
                 }
             ]
+        },
+        {
+            "id": "general",
+            "name": "일반",
+            "shortcuts": [
+                {
+                    "id": "copy",
+                    "description": "선택한 항목 복사",
+                    "keys": ["Ctrl", "C"],
+                    "category": "일반",
+                    "difficulty": "easy",
+                    "usage": "매우 자주"
+                },
+                {
+                    "id": "paste",
+                    "description": "복사한 항목 붙여넣기",
+                    "keys": ["Ctrl", "V"],
+                    "category": "일반",
+                    "difficulty": "easy",
+                    "usage": "매우 자주"
+                },
+                {
+                    "id": "cut",
+                    "description": "선택한 항목 잘라내기",
+                    "keys": ["Ctrl", "X"],
+                    "category": "일반",
+                    "difficulty": "easy",
+                    "usage": "자주"
+                },
+                {
+                    "id": "undo",
+                    "description": "마지막 작업 실행 취소",
+                    "keys": ["Ctrl", "Z"],
+                    "category": "일반",
+                    "difficulty": "easy",
+                    "usage": "자주"
+                },
+                {
+                    "id": "redo",
+                    "description": "실행 취소한 작업 다시 실행",
+                    "keys": ["Ctrl", "Y"],
+                    "category": "일반",
+                    "difficulty": "medium",
+                    "usage": "보통"
+                }
+            ]
+        },
+        {
+            "id": "browser",
+            "name": "브라우저",
+            "shortcuts": [
+                {
+                    "id": "new-tab",
+                    "description": "새 탭 열기",
+                    "keys": ["Ctrl", "T"],
+                    "category": "브라우저",
+                    "difficulty": "easy",
+                    "usage": "매우 자주"
+                },
+                {
+                    "id": "close-tab",
+                    "description": "현재 탭 닫기",
+                    "keys": ["Ctrl", "W"],
+                    "category": "브라우저",
+                    "difficulty": "easy",
+                    "usage": "매우 자주"
+                },
+                {
+                    "id": "reload",
+                    "description": "페이지 새로고침",
+                    "keys": ["F5"],
+                    "category": "브라우저",
+                    "difficulty": "easy",
+                    "usage": "자주"
+                },
+                {
+                    "id": "find",
+                    "description": "페이지에서 찾기",
+                    "keys": ["Ctrl", "F"],
+                    "category": "브라우저",
+                    "difficulty": "medium",
+                    "usage": "자주"
+                },
+                {
+                    "id": "dev-tools",
+                    "description": "개발자 도구 열기",
+                    "keys": ["F12"],
+                    "category": "브라우저",
+                    "difficulty": "hard",
+                    "usage": "가끔"
+                }
+            ]
+        },
+        {
+            "id": "editor",
+            "name": "텍스트 편집",
+            "shortcuts": [
+                {
+                    "id": "select-all",
+                    "description": "모든 항목 선택",
+                    "keys": ["Ctrl", "A"],
+                    "category": "텍스트 편집",
+                    "difficulty": "easy",
+                    "usage": "자주"
+                },
+                {
+                    "id": "find-replace",
+                    "description": "찾기 및 바꾸기",
+                    "keys": ["Ctrl", "H"],
+                    "category": "텍스트 편집",
+                    "difficulty": "medium",
+                    "usage": "보통"
+                },
+                {
+                    "id": "word-wrap",
+                    "description": "자동 줄바꿈 토글",
+                    "keys": ["Alt", "Z"],
+                    "category": "텍스트 편집",
+                    "difficulty": "hard",
+                    "usage": "가끔"
+                },
+                {
+                    "id": "multi-cursor",
+                    "description": "다중 커서 선택",
+                    "keys": ["Ctrl", "D"],
+                    "category": "텍스트 편집",
+                    "difficulty": "hard",
+                    "usage": "가끔"
+                },
+                {
+                    "id": "comment",
+                    "description": "주석 처리/해제",
+                    "keys": ["Ctrl", "/"],
+                    "category": "텍스트 편집",
+                    "difficulty": "medium",
+                    "usage": "자주"
+                }
+            ]
         }
     ]
 } 

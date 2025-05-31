@@ -80,6 +80,104 @@ const storage = {
     }
 };
 
+// 디버깅 도구
+const debug = {
+    enabled: false,
+    
+    log: function(message, data = null) {
+        if (!this.enabled) return;
+        console.log(`[Debug] ${message}`, data || '');
+    },
+    
+    error: function(message, error = null) {
+        if (!this.enabled) return;
+        console.error(`[Debug Error] ${message}`, error || '');
+    },
+    
+    warn: function(message, data = null) {
+        if (!this.enabled) return;
+        console.warn(`[Debug Warning] ${message}`, data || '');
+    },
+    
+    // 학습 관리자 상태 출력
+    printLearningManagerState: function() {
+        if (!this.enabled) return;
+        console.log('=== Learning Manager State ===');
+        console.log('Learned Shortcuts:', [...learningManager.learnedShortcuts]);
+        console.log('Favorite Shortcuts:', [...learningManager.favoriteShortcuts]);
+        console.log('Learning Progress:', learningManager.learningProgress);
+        console.log('Last Study Date:', learningManager.lastStudyDate);
+        console.log('Study Streak:', learningManager.studyStreak);
+        console.log('===========================');
+    },
+    
+    // 로컬 스토리지 상태 출력
+    printLocalStorageState: function() {
+        if (!this.enabled) return;
+        console.log('=== Local Storage State ===');
+        console.log('learnedShortcuts:', localStorage.getItem('learnedShortcuts'));
+        console.log('favoriteShortcuts:', localStorage.getItem('favoriteShortcuts'));
+        console.log('learningProgress:', localStorage.getItem('learningProgress'));
+        console.log('lastStudyDate:', localStorage.getItem('lastStudyDate'));
+        console.log('studyStreak:', localStorage.getItem('studyStreak'));
+        console.log('=========================');
+    },
+    
+    // 데이터 검증
+    validateData: function() {
+        if (!this.enabled) return;
+        
+        // 카테고리 검증
+        if (!shortcutsData.categories || !Array.isArray(shortcutsData.categories)) {
+            this.error('Invalid categories data structure');
+            return false;
+        }
+        
+        // 단축키 검증
+        for (const category of shortcutsData.categories) {
+            if (!category.shortcuts || !Array.isArray(category.shortcuts)) {
+                this.error(`Invalid shortcuts array in category: ${category.name}`);
+                return false;
+            }
+            
+            for (const shortcut of category.shortcuts) {
+                if (!this.validateShortcut(shortcut)) {
+                    this.error(`Invalid shortcut in category ${category.name}:`, shortcut);
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    },
+    
+    // 단축키 데이터 검증
+    validateShortcut: function(shortcut) {
+        const requiredFields = ['id', 'description', 'keys', 'category', 'difficulty', 'usage'];
+        return requiredFields.every(field => shortcut.hasOwnProperty(field));
+    },
+    
+    // 학습 진행도 검증
+    validateProgress: function(shortcutId) {
+        if (!this.enabled) return;
+        
+        const progress = learningManager.getProgress(shortcutId);
+        if (!progress) {
+            this.warn(`No progress data for shortcut: ${shortcutId}`);
+            return false;
+        }
+        
+        const requiredFields = ['date', 'attempts', 'lastReview'];
+        const isValid = requiredFields.every(field => progress.hasOwnProperty(field));
+        
+        if (!isValid) {
+            this.error(`Invalid progress data for shortcut: ${shortcutId}`, progress);
+        }
+        
+        return isValid;
+    }
+};
+
 // 학습 관리 시스템
 class LearningManager {
     constructor() {
@@ -92,9 +190,13 @@ class LearningManager {
 
     // 학습 상태 토글
     toggleLearned(shortcutId) {
+        debug.log('Toggling learned state for shortcut:', shortcutId);
+        const previousState = this.isLearned(shortcutId);
+        
         if (this.learnedShortcuts.has(shortcutId)) {
             this.learnedShortcuts.delete(shortcutId);
             delete this.learningProgress[shortcutId];
+            debug.log('Removed from learned shortcuts');
         } else {
             this.learnedShortcuts.add(shortcutId);
             this.learningProgress[shortcutId] = {
@@ -102,29 +204,45 @@ class LearningManager {
                 attempts: 0,
                 lastReview: null
             };
+            debug.log('Added to learned shortcuts');
         }
+        
         this.updateStorage();
         this.updateStudyStreak();
+        
+        debug.printLearningManagerState();
+        return !previousState;
     }
 
     // 즐겨찾기 토글
     toggleFavorite(shortcutId) {
+        debug.log('Toggling favorite state for shortcut:', shortcutId);
+        const previousState = this.isFavorite(shortcutId);
+        
         if (this.favoriteShortcuts.has(shortcutId)) {
             this.favoriteShortcuts.delete(shortcutId);
+            debug.log('Removed from favorites');
         } else {
             this.favoriteShortcuts.add(shortcutId);
+            debug.log('Added to favorites');
         }
+        
         this.updateStorage();
+        debug.printLearningManagerState();
+        return !previousState;
     }
 
     // 학습 진행도 업데이트
     updateProgress(shortcutId, success) {
+        debug.log('Updating progress for shortcut:', shortcutId, { success });
+        
         if (!this.learningProgress[shortcutId]) {
             this.learningProgress[shortcutId] = {
                 date: new Date().toISOString(),
                 attempts: 0,
                 lastReview: null
             };
+            debug.log('Created new progress entry');
         }
 
         const progress = this.learningProgress[shortcutId];
@@ -133,17 +251,23 @@ class LearningManager {
         progress.lastSuccess = success;
 
         this.updateStorage();
+        debug.printLearningManagerState();
     }
 
     // 학습 스트릭 업데이트
     updateStudyStreak() {
+        debug.log('Updating study streak');
         const today = new Date().toDateString();
         const lastDate = this.lastStudyDate ? new Date(this.lastStudyDate).toDateString() : null;
+        
+        debug.log('Current streak:', this.studyStreak);
+        debug.log('Last study date:', lastDate);
+        debug.log('Today:', today);
 
         if (!lastDate || lastDate === today) {
-            // 오늘 이미 학습했거나 처음 학습하는 경우
             if (!lastDate) {
                 this.studyStreak = 1;
+                debug.log('First study day, streak set to 1');
             }
         } else {
             const yesterday = new Date();
@@ -151,16 +275,17 @@ class LearningManager {
             const yesterdayString = yesterday.toDateString();
 
             if (lastDate === yesterdayString) {
-                // 연속 학습
                 this.studyStreak++;
+                debug.log('Consecutive day, streak increased to:', this.studyStreak);
             } else {
-                // 연속 학습이 끊어진 경우
                 this.studyStreak = 1;
+                debug.log('Streak broken, reset to 1');
             }
         }
 
         this.lastStudyDate = today;
         this.updateStorage();
+        debug.printLearningManagerState();
     }
 
     // 학습 통계 가져오기
@@ -233,4 +358,11 @@ class LearningManager {
 const learningManager = new LearningManager();
 
 // 초기 데이터 로드
-storage.loadData(); 
+storage.loadData();
+
+// 초기화 시 디버깅 활성화
+debug.enabled = true;
+debug.log('Debug mode enabled');
+debug.validateData();
+debug.printLearningManagerState();
+debug.printLocalStorageState(); 
