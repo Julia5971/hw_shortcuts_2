@@ -123,4 +123,6 @@ MIT License - 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
 
 프로젝트 관리자 - [@Julia5971](https://github.com/Julia5971)
 
-프로젝트 링크: [https://github.com/Julia5971/hw_shortcuts_2](https://github.com/Julia5971/hw_shortcuts_2) 
+프로젝트 링크: [https://github.com/Julia5971/hw_shortcuts_2](https://github.com/Julia5971/hw_shortcuts_2)
+
+© 2025 Julia5971. All rights reserved. 
