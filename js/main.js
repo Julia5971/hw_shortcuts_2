@@ -479,6 +479,90 @@ function filterByDifficulty(difficulty) {
     renderShortcuts(filtered);
 }
 
+// 카테고리 목록 동적 표시 및 필터링 기능 추가
+function showCategoryList() {
+    // 이미 표시된 경우 토글로 닫기
+    let existing = document.getElementById('category-list-popup');
+    if (existing) {
+        existing.remove();
+        return;
+    }
+    // 팝업 생성
+    const popup = document.createElement('div');
+    popup.id = 'category-list-popup';
+    popup.style.position = 'absolute';
+    popup.style.top = '60px';
+    popup.style.left = '50%';
+    popup.style.transform = 'translateX(-50%)';
+    popup.style.background = '#fff';
+    popup.style.border = '1px solid #ddd';
+    popup.style.borderRadius = '8px';
+    popup.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+    popup.style.zIndex = '2000';
+    popup.style.padding = '1rem 2rem';
+    popup.style.minWidth = '220px';
+
+    // 카테고리 목록
+    const list = document.createElement('ul');
+    list.style.listStyle = 'none';
+    list.style.padding = '0';
+    list.style.margin = '0';
+    list.style.display = 'flex';
+    list.style.flexDirection = 'column';
+    list.style.gap = '0.5rem';
+
+    // "전체" 항목
+    const allItem = document.createElement('li');
+    allItem.innerHTML = '<button class="category-list-btn" data-category="all">전체 보기</button>';
+    list.appendChild(allItem);
+
+    // 실제 카테고리 목록
+    shortcutsData.categories.forEach(cat => {
+        const li = document.createElement('li');
+        li.innerHTML = `<button class="category-list-btn" data-category="${cat.id}">${cat.name}</button>`;
+        list.appendChild(li);
+    });
+    popup.appendChild(list);
+    document.body.appendChild(popup);
+
+    // 버튼 클릭 시 해당 카테고리만 필터링
+    popup.querySelectorAll('.category-list-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const catId = e.target.dataset.category;
+            if (catId === 'all') {
+                renderShortcuts(cache.getAllShortcuts());
+            } else {
+                const filtered = cache.getFilteredShortcuts(catId, 'all');
+                renderShortcuts(filtered);
+            }
+            popup.remove();
+        });
+    });
+
+    // 팝업 외부 클릭 시 닫기
+    setTimeout(() => {
+        document.addEventListener('mousedown', function handler(e) {
+            if (!popup.contains(e.target)) {
+                popup.remove();
+                document.removeEventListener('mousedown', handler);
+            }
+        });
+    }, 10);
+}
+
+// 네비게이션의 카테고리 메뉴에 이벤트 추가
+function setupCategoryNavMenu() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        if (link.textContent.includes('카테고리')) {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                showCategoryList();
+            });
+        }
+    });
+}
+
 // 이벤트 리스너 최적화
 document.addEventListener('DOMContentLoaded', () => {
     // 초기 렌더링
@@ -540,4 +624,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 초기화 시 검색 디버깅 활성화
     searchDebug.enabled = true;
     searchDebug.log('Search debug mode enabled');
+
+    setupCategoryNavMenu();
 }); 
